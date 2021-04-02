@@ -10,48 +10,33 @@ class Reviews extends Component {
   componentDidMount() {
     // console.log('Я родился Reviews!');
     this.getReviewsOfMovie();
-    // console.log(this.state);
   }
-  componentDidUpdate() {
-    // console.log('Я обновился Reviews!');
-    // const { cast } = this.state;
-    // console.log(cast);
-  }
+  // componentDidUpdate() {
+  //   // console.log('Я обновился Reviews!');
+  // }
   componentWillUnmount() {
     this.setState({
       reviews: [],
       error: false,
-      // fetchLength: result.length,
     });
   }
   getReviewsOfMovie = (prevProps, prevState) => {
     const { movieId } = this.props.match.params;
     // console.log(movieId);
-    // this.setState({ isLoading: true });
     fetchReviewsOfMovie(movieId)
       .then(result => {
         // console.log(result);
         this.setState({
           reviews: result.results,
-          // fetchLength: result.length,
         });
       })
       .catch(error => {
         this.setState({ error: true });
-      })
-      .finally(() => {
-        // this.setState({ isLoading: false });
-        // window.scrollTo({
-        //   top: document.documentElement.scrollHeight,
-        //   behavior: 'smooth',
-        // });
       });
-    // }
   };
   render() {
-    // console.log(this.state);
     const { reviews } = this.state;
-    console.log(reviews);
+    // console.log(reviews);
     if (reviews.length > 0) {
       return (
         <div>
