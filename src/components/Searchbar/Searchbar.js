@@ -19,14 +19,14 @@ class Searchbar extends Component {
     const { query } = this.state;
     // console.log(query);
     return (
-      <header className={sbs.Searchbar}>
+      <div className={sbs.Searchbar}>
         <form className={sbs.SearchForm} onSubmit={this.handleSubmit}>
           <input
             className={sbs.input}
             type="text"
             autoComplete="off"
             autoFocus
-            placeholder="Search images and photos"
+            placeholder="Search movie name"
             onChange={this.handleChange}
             name="query"
             value={query}
@@ -35,7 +35,7 @@ class Searchbar extends Component {
             <span className={sbs.button_label}>Search</span>
           </button>
         </form>
-      </header>
+      </div>
     );
   }
 }

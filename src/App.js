@@ -1,80 +1,31 @@
-import React, { Component } from 'react';
+import React, { Suspense, lazy } from 'react';
+import { Route, Switch } from 'react-router-dom';
 import './App.css';
+import Header from './components/Header/Header';
+// import HomePage from './pages/HomePage/HomePage';
+// import MovieDetailsPage from './pages/MovieDetailsPage/MovieDetailsPage';
+// import MoviesPage from './pages/MoviesPage/MoviesPage';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
-import Searchbar from './components/Searchbar/Searchbar';
-import fetchImages from './services/pixabayApi';
-import ImageGallery from './components/ImageGallery/ImageGallery';
-import Button from './components/Button/Button';
-import Notifications from './components/Notifications/Notifications';
+import routes from './routes';
 
-class App extends Component {
-  state = {
-    query: '',
-    page: 1,
-    gallery: [],
-    fetchLength: null,
-    isLoading: false,
-    error: false,
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    // console.log('я обновился');
-
-    const { query, page } = this.state;
-    if (query !== prevState.query && query !== '') {
-      this.fetchImagesByQuery(query);
-    } else if (query === prevState.query && page !== prevState.page) {
-      this.fetchImagesByQuery(query);
-    }
-  }
-
-  getQueryByForm = ({ query }) => {
-    // console.log(query);
-    this.setState({ query: '', page: 1, gallery: [], fetchLength: 0 });
-    this.setState({ query: query, page: 1, gallery: [] });
-  };
-
-  setNewPage = e => {
-    e.preventDefault();
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
-  };
-
-  fetchImagesByQuery = (prevProps, prevState) => {
-    const { query, page } = this.state;
-
-    this.setState({ isLoading: true });
-    fetchImages(query, page)
-      .then(result => {
-        // console.log(result);
-        this.setState(prevState => ({
-          gallery: [...prevState.gallery, ...result],
-          fetchLength: result.length,
-        }));
-      })
-      .catch(error => {
-        this.setState({ error: true });
-      })
-      .finally(() => {
-        this.setState({ isLoading: false });
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: 'smooth',
-        });
-      });
-    // }
-  };
-  render() {
-    const { gallery, fetchLength, isLoading, query, error } = this.state;
-    // console.log(fetchLength);
-    return (
-      <div className="App">
-        <h1>Search image</h1>
-        <Searchbar onSubmit={this.getQueryByForm} />
-        <ImageGallery gallery={gallery} />
-        {isLoading && (
+const HomePage = lazy(() =>
+  import('./pages/HomePage/HomePage' /* webpackChunkName: "home-page" */),
+);
+const MovieDetailsPage = lazy(() =>
+  import(
+    './pages/MovieDetailsPage/MovieDetailsPage' /* webpackChunkName: "details-page" */
+  ),
+);
+const MoviesPage = lazy(() =>
+  import('./pages/MoviesPage/MoviesPage' /* webpackChunkName: "movies-page" */),
+);
+const App = () => {
+  return (
+    <div>
+      <Header />
+      <Suspense
+        fallback={
           <Loader
             type="ThreeDots"
             color="#3f51b5"
@@ -82,20 +33,31 @@ class App extends Component {
             width={100}
             timeout={3000}
           />
-        )}
-        {fetchLength === 12 && !isLoading && (
-          <Button getNewPage={this.setNewPage} />
-        )}
-
-        <Notifications
-          fetchLength={fetchLength}
-          galleryLength={gallery.length}
-          searchQuery={query}
-          error={error}
-        />
-      </div>
-    );
-  }
-}
+        }
+      >
+        <Switch>
+          {/* {routes.map(route => {
+            console.log(route);
+            return <Route {...route} />;
+          })} */}
+          <Route exact path={routes.home} component={HomePage} />
+          <Route
+            path={routes.details}
+            render={props => {
+              // console.log(props);
+              return <MovieDetailsPage {...props} />;
+            }}
+          />
+          <Route
+            path={routes.movies}
+            render={props => <MoviesPage {...props} />}
+          />
+          <Route component={HomePage} />
+          {/* <Route component={NotFoundPage} /> */}
+        </Switch>
+      </Suspense>
+    </div>
+  );
+};
 
 export default App;
