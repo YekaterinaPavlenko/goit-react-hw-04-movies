@@ -29,7 +29,7 @@ class MoviesPage extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('Я обновился MoviesPage!');
+    // console.log('Я обновился MoviesPage!');
     // console.log(this.state);
 
     const { query, page } = this.state;
