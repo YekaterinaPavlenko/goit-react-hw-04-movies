@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink, withRouter } from 'react-router-dom';
 import hs from './Header.module.css';
-// import routes from '../../routes';
+import PropTypes from 'prop-types';
+
 const Header = ({ match }) => {
   return (
     <header className={hs.header}>
@@ -30,5 +31,10 @@ const Header = ({ match }) => {
       </div>
     </header>
   );
+};
+Header.propTypes = {
+  match: PropTypes.shape({
+    url: PropTypes.string.isRequired,
+  }),
 };
 export default withRouter(Header);

@@ -124,4 +124,11 @@ class MoviesPage extends Component {
     );
   }
 }
+// MoviesPage.propTypes = {
+//   gallery: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.number.isRequired,
+//     }),
+//   ).isRequired,
+// };
 export default MoviesPage;
