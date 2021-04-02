@@ -5,6 +5,7 @@ import hps from '../HomePage/HomePage.module.css';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 import Searchbar from '../../components/Searchbar/Searchbar';
+import Button from '../../components/Button/Button';
 
 class MoviesPage extends Component {
   state = {
@@ -12,6 +13,7 @@ class MoviesPage extends Component {
     page: 1,
     query: '',
     error: false,
+    fetchLength: 0,
     isLoading: false,
   };
   componentDidMount() {
@@ -27,7 +29,7 @@ class MoviesPage extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // console.log('Я обновился MoviesPage!');
+    console.log('Я обновился MoviesPage!');
     // console.log(this.state);
 
     const { query, page } = this.state;
@@ -58,25 +60,44 @@ class MoviesPage extends Component {
     fetchMoviesByQuery(query, page)
       .then(({ results }) => {
         // console.log(results);
-        this.setState({
-          movies: results,
-        });
+        this.setState(prevState => ({
+          movies: [...prevState.movies, ...results],
+          fetchLength: results.length,
+        }));
       })
       .catch(error => {
         this.setState({ error: true });
       })
       .finally(() => {
         this.setState({ isLoading: false });
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
       });
   };
+  setNewPage = e => {
+    e.preventDefault();
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
   render() {
-    const { movies, isLoading } = this.state;
+    const { movies, isLoading, fetchLength } = this.state;
     // console.log(this.props.match.url);
     const { location } = this.props;
     return (
       <div>
         <Searchbar onSubmit={this.getQueryByForm} />
-
+        {isLoading && (
+          <Loader
+            type="ThreeDots"
+            color="#3f51b5"
+            height={100}
+            width={100}
+            timeout={3000}
+          />
+        )}
         <ul className={hps.movieList}>
           {movies &&
             movies.map(movie => {
@@ -95,14 +116,9 @@ class MoviesPage extends Component {
               );
             })}
         </ul>
-        {isLoading && (
-          <Loader
-            type="ThreeDots"
-            color="#3f51b5"
-            height={100}
-            width={100}
-            timeout={3000}
-          />
+
+        {fetchLength === 20 && !isLoading && (
+          <Button getNewPage={this.setNewPage} />
         )}
       </div>
     );
