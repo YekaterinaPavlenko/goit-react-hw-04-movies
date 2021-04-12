@@ -15,12 +15,12 @@ class Cast extends Component {
   //   // const { cast } = this.state;
   //   // console.log(cast);
   // }
-  componentWillUnmount() {
-    this.setState({
-      cast: [],
-      error: false,
-    });
-  }
+  // componentWillUnmount() {
+  //   this.setState({
+  //     cast: [],
+  //     error: false,
+  //   });
+  // }
   getCastOfMovie = () => {
     const { movieId } = this.props.match.params;
     // console.log(movieId);
