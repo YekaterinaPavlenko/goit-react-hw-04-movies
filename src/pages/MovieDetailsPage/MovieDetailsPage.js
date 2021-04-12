@@ -1,15 +1,20 @@
-import React, { Component } from 'react';
-import { NavLink, Route, withRouter } from 'react-router-dom';
+import React, { Component, Suspense, lazy } from 'react';
+import { NavLink, Route, Switch, withRouter } from 'react-router-dom';
 import { fetchDetailsOfMovie } from '../../services/movieApi/movieApi';
 import mdps from './MovieDetailsPage.module.css';
-import Cast from '../../components/Cast/Cast';
-import Reviews from '../../components/Reviews/Reviews';
+// import Cast from '../../components/Cast/Cast';
+// import Reviews from '../../components/Reviews/Reviews';
 import routes from '../../routes';
-
+const Cast = lazy(() =>
+  import('../../components/Cast/Cast' /* webpackChunkName: "cast" */),
+);
+const Reviews = lazy(() =>
+  import('../../components/Reviews/Reviews' /* webpackChunkName: "reviews" */),
+);
 class MovieDetailsPage extends Component {
   state = {
     movieDetails: {},
-    error: false,
+    error: null,
   };
   componentDidMount() {
     // console.log('Я родился MovieDetailsPage!');
@@ -113,8 +118,12 @@ class MovieDetailsPage extends Component {
             </NavLink>
           </li>
         </ul>
-        <Route path={`${match.path}/cast`} component={Cast}></Route>
-        <Route path={`${match.path}/reviews`} component={Reviews}></Route>
+        <Suspense>
+          <Switch>
+            <Route path={`${match.path}/cast`} component={Cast}></Route>
+            <Route path={`${match.path}/reviews`} component={Reviews}></Route>
+          </Switch>
+        </Suspense>
       </div>
     );
   }
